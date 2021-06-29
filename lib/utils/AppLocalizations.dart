@@ -1,4 +1,5 @@
 import 'package:curanetwork_library/imports/imports.dart';
+import 'package:flutter/services.dart';
 
 class AppLocalizations {
   final Locale locale;

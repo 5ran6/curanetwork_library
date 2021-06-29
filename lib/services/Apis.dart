@@ -1,6 +1,7 @@
 import 'package:curanetwork_library/imports/imports.dart';
 import 'package:curanetwork_library/utils/tools.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Apis {
   bool debug = true;
