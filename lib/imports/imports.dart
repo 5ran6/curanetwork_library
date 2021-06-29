@@ -1,6 +1,5 @@
 //------------------------PACKAGES----------------------------------------------
 export 'package:flutter/material.dart';
-export 'package:flutter_screenutil/flutter_screenutil.dart';
 export 'dart:convert';
 export 'package:flutter_screenutil/flutter_screenutil.dart';
 
