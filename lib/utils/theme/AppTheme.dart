@@ -99,10 +99,16 @@ class AppTheme {
     splashColor: Colors.transparent,
     bottomAppBarColor: kWhiteColor,
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
-      selectedIconTheme: IconThemeData(),
+      selectedIconTheme: IconThemeData(
+        color: kPrimaryColor,
+      ),
       unselectedIconTheme: IconThemeData(),
-      selectedLabelStyle: kBottomLabelSelectedTextStyle,
-      unselectedLabelStyle: kBottomLabelUnselectedTextStyle,
+      selectedLabelStyle: kBottomLabelSelectedTextStyle.copyWith(
+          color: kPrimaryColor,
+          fontWeight: FontWeight.w500,
+          fontSize: ScreenUtil().setSp(10)),
+      unselectedLabelStyle: kBottomLabelUnselectedTextStyle.copyWith(
+          color: kPrimaryColor, fontSize: ScreenUtil().setSp(10)),
     ),
     inputDecorationTheme: InputDecorationTheme(
       floatingLabelBehavior: FloatingLabelBehavior.auto,
@@ -116,7 +122,7 @@ class AppTheme {
         borderSide: BorderSide(color: kGreyColor),
       ),
       labelStyle: kBodyTextStyle,
-      hintStyle: kBodyTextStyle,
+      hintStyle: kBodyTextStyle.copyWith(color: Colors.grey),
     ),
     textTheme: TextTheme(
       headline1: kHeadline1,
@@ -156,4 +162,3 @@ class AppTheme {
         color: Colors.white,
       ));
 }
-
