@@ -23,7 +23,7 @@ class Apis {
     /*Calling the API url */
     var jsonData;
     final response = await http.post(
-        Uri.parse(Params.base_url + "/accounts/auth/users"),
+        Uri.parse(Params.base_url + "/accounts/auth/users/"),
         body: data,
         headers: {"Client-ID": "$client_id"});
 
@@ -408,7 +408,6 @@ class Apis {
   }
 
 //#-----Appointments-------------------------------------------------------------------------------------------------
-  //TODO: Dilli
   //-------Book An Appointment--------------------------------------------------
   Future<Map?> bookAppointment(int doctor, String dateTime) async {
     Map data = {'doctor': doctor, 'dateTime': dateTime};
@@ -502,7 +501,7 @@ class Apis {
     /*Calling the API url */
     var jsonData;
     final response = await http.post(
-        Uri.parse(Params.base_url + "/appointments/2/reschedule/"),
+        Uri.parse(Params.base_url + "/appointments/2/cancel/"),
         body: data,
         headers: {"Client-ID": "$client_id", "Authorization": "$token"});
 
@@ -751,7 +750,7 @@ class Apis {
 
     /*Calling the API url */
     var jsonData;
-    final response = await http.get(Uri.parse(Params.base_url + "/wallets"),
+    final response = await http.get(Uri.parse(Params.base_url + "/wallets/"),
         headers: {"Client-ID": "$client_id", "Authorization": "$token"});
 
     if (debug) {
@@ -870,7 +869,6 @@ class Apis {
       'account_number': accountNumber,
       'withdrawal_pin': withdrawalPin
     };
-    SharedPreferences prefs = await SharedPreferences.getInstance();
 
     /*Calling the API url */
     var jsonData;
@@ -906,7 +904,7 @@ class Apis {
     /*Calling the API url */
     var jsonData;
     final response = await http.get(
-        Uri.parse(Params.base_url + "/wallets/details/"),
+        Uri.parse(Params.base_url + "/wallets/transactions"),
         headers: {"Authorization": 'Token $token', "Client-ID": '$client_id'});
 
     if (debug) {

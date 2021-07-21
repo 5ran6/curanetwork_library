@@ -13,13 +13,13 @@ class AppTheme {
   //Headline1
   static final kHeadline1 = TextStyle(
       color: kBlackColor,
-      fontSize: ScreenUtil().setSp(24),
+      fontSize: ScreenUtil().setSp(22),
       fontWeight: FontWeight.w700);
 
   //Headline 2
   static final kHeadline2 = TextStyle(
     color: Colors.white,
-    fontSize: ScreenUtil().setSp(20),
+    fontSize: ScreenUtil().setSp(16),
   );
 
   //Body Text style
@@ -99,10 +99,16 @@ class AppTheme {
     splashColor: Colors.transparent,
     bottomAppBarColor: kWhiteColor,
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
-      selectedIconTheme: IconThemeData(),
+      selectedIconTheme: IconThemeData(
+        color: kPrimaryColor,
+      ),
       unselectedIconTheme: IconThemeData(),
-      selectedLabelStyle: kBottomLabelSelectedTextStyle,
-      unselectedLabelStyle: kBottomLabelUnselectedTextStyle,
+      selectedLabelStyle: kBottomLabelSelectedTextStyle.copyWith(
+          color: kPrimaryColor,
+          fontWeight: FontWeight.w500,
+          fontSize: ScreenUtil().setSp(10)),
+      unselectedLabelStyle: kBottomLabelUnselectedTextStyle.copyWith(
+          color: kPrimaryColor, fontSize: ScreenUtil().setSp(10)),
     ),
     inputDecorationTheme: InputDecorationTheme(
       floatingLabelBehavior: FloatingLabelBehavior.auto,
@@ -116,7 +122,7 @@ class AppTheme {
         borderSide: BorderSide(color: kGreyColor),
       ),
       labelStyle: kBodyTextStyle,
-      hintStyle: kBodyTextStyle,
+      hintStyle: kBodyTextStyle.copyWith(color: Colors.grey),
     ),
     textTheme: TextTheme(
       headline1: kHeadline1,
@@ -156,4 +162,3 @@ class AppTheme {
         color: Colors.white,
       ));
 }
-

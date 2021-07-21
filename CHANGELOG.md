@@ -11,5 +11,11 @@
 * Added constants class with all utils for frontend
 
 ## 0.0.5
-* Fixed all bugs
+* Fixed all bugs relating to frontend. 
+
+## 0.0.6
+* Added new theme data
+
+## 0.0.7
+* Fixed bugs in backend. Almost Stable
 
