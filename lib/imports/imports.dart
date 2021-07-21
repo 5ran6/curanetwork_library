@@ -8,6 +8,7 @@ export 'package:curanetwork_library/utils/theme/AppTheme.dart';
 
 //------------------------UTILS-------------------------------------------------
 export 'package:curanetwork_library/utils/values/params.dart';
+export 'package:curanetwork_library/utils/animations/animation.dart';
 export 'package:curanetwork_library/utils/constants.dart';
 
 //------------------------Services----------------------------------------------

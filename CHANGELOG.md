@@ -19,3 +19,14 @@
 ## 0.0.7
 * Fixed bugs in backend. Almost Stable
 
+## 0.0.8
+* Added loader
+
+## 0.0.9
+* Added animation
+
+## 0.1.0
+* Animation library refactor
+
+## 0.1.1
+* Animation library refactor for sharedPref

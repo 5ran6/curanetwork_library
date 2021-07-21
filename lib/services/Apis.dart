@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class Apis {
   bool debug = true;
   Tools tools = new Tools();
+  late SharedPreferences prefs;
 
   final String? iAmA; /// enum ["consultant" or "patient"]
 
@@ -16,7 +17,7 @@ class Apis {
 //create user
   Future<Map?> signUp(String email, String mobile, String password) async {
     Map data = {'email': email, 'mobile': mobile, 'password': password};
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs = await SharedPreferences.getInstance();
 
     String? client_id = iAmA == "consultant"? Params.consultant_client_id: Params.patient_client_id;
 
@@ -65,7 +66,7 @@ class Apis {
   Future<String?> activateAccount(
       String type, String email, String mobile, String code) async {
     Map data = {'type': type, 'email': email, 'mobile': mobile, 'code': code};
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs = await SharedPreferences.getInstance();
 
     String? client_id = iAmA == "consultant"? Params.consultant_client_id: Params.patient_client_id;
 
@@ -98,7 +99,7 @@ class Apis {
   //login with email
   Future<Map?> loginEmail(String email, String password) async {
     Map data = {'username': email, 'password': password};
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs = await SharedPreferences.getInstance();
     String? client_id = iAmA == "consultant"? Params.consultant_client_id: Params.patient_client_id;
 
     /*Calling the API url */
@@ -119,6 +120,7 @@ class Apis {
     if (response.statusCode == 200 || response.statusCode == 201) {
       jsonData = json.decode(response.body);
 
+      prefs.setBool('loggedIn', true);
       prefs.setString('refresh_token', jsonData["refresh"]);
       prefs.setString('token', jsonData["access_token"]);
 
@@ -135,7 +137,7 @@ class Apis {
   //login with phone
   Future<Map?> loginPhone(String phone, String password) async {
     Map data = {'username': phone, 'password': password};
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs = await SharedPreferences.getInstance();
     String? client_id = iAmA == "consultant"? Params.consultant_client_id: Params.patient_client_id;
 
     /*Calling the API url */
@@ -156,6 +158,7 @@ class Apis {
     if (response.statusCode == 200 || response.statusCode == 201) {
       jsonData = json.decode(response.body);
 
+      prefs.setBool('loggedIn', true);
       prefs.setString('refresh_token', jsonData["refresh"]);
       prefs.setString('token', jsonData["access_token"]);
 
@@ -172,7 +175,7 @@ class Apis {
 //edit patients profile
   Future<String?> editPatientProfile(Map details) async {
     /// values expected (as spelt) in details map are [ "firstName": "Immanuel", "middleName": "", "lastName": "Kolapo", "dateOfBirth": null, "sex": "Male", "address": "", "city": "", "state": "", "selfie": null, "identityType": "", "identityNumber": "", "identityVerified": false, "weight": null, "height": null, "genotype": "", "medicalDocuments": null, "emergencyContacts": null, ]
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs = await SharedPreferences.getInstance();
     String? client_id = iAmA == "consultant"? Params.consultant_client_id: Params.patient_client_id;
     String? token = prefs.getString("token");
 
@@ -204,7 +207,7 @@ class Apis {
 //edit patients profile
   Future<String?> editDoctorProfile(Map details) async {
     /// values expected (as spelt) in details map are [ "firstName": "Immanuel", "middleName": "", "lastName": "Kolapo", "dateOfBirth": null, "sex": "Male", "address": "", "city": "", "state": "", "selfie": null, "identityType": "", "identityNumber": "", "identityVerified": false, "weight": null, "height": null, "genotype": "", "medicalDocuments": null, "emergencyContacts": null, ]
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs = await SharedPreferences.getInstance();
     String? client_id = iAmA == "consultant"? Params.consultant_client_id: Params.patient_client_id;
     String? token = prefs.getString("token");
 
@@ -236,7 +239,7 @@ class Apis {
   //send otp
   Future<Map?> sendOtp(String email, String phone) async {
     Map data = {'email': email, 'mobile': phone};
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs = await SharedPreferences.getInstance();
     String? client_id = iAmA == "consultant"? Params.consultant_client_id: Params.patient_client_id;
 
     /*Calling the API url */
@@ -280,7 +283,7 @@ class Apis {
       'reference': reference
     };
 
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs = await SharedPreferences.getInstance();
     String? client_id = iAmA == "consultant"? Params.consultant_client_id: Params.patient_client_id;
 
     /*Calling the API url */
@@ -311,7 +314,7 @@ class Apis {
   Future<Map?> identityVerification(String id_type, String bvn) async {
     /// [id_type] e.g bvn
     Map data = {'id_type': id_type, 'id_number': bvn};
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs = await SharedPreferences.getInstance();
     String? client_id = iAmA == "consultant"? Params.consultant_client_id: Params.patient_client_id;
 
     /*Calling the API url */
@@ -357,7 +360,7 @@ class Apis {
   Future<Map?> getUserAccountDetails() async {
     /// [id_type] e.g bvn
 
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs = await SharedPreferences.getInstance();
     String? client_id = iAmA == "consultant"? Params.consultant_client_id: Params.patient_client_id;
     String? token = prefs.getString("token");
 
@@ -401,9 +404,9 @@ class Apis {
 
 // logout
   Future<bool?> logout() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs = await SharedPreferences.getInstance();
     await prefs.clear().then((value) {
-      return true;
+      return value;
     });
   }
 
@@ -414,7 +417,7 @@ class Apis {
 
     ///date format [dateTime] is 2021-04-22 06:00:00
 
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs = await SharedPreferences.getInstance();
     String? client_id = iAmA == "consultant"? Params.consultant_client_id: Params.patient_client_id;
     String? token = prefs.getString("token");
 
@@ -454,7 +457,7 @@ class Apis {
     ///date format [dateTime] is 2021-04-22 06:00:00
 
     Map data = {"dateTime": dateTime};
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs = await SharedPreferences.getInstance();
     String? client_id = iAmA == "consultant"? Params.consultant_client_id: Params.patient_client_id;
     String? token = prefs.getString("token");
 
@@ -494,7 +497,7 @@ class Apis {
   //TODO: handle response body
   Future<bool?> cancelAppointment(String reason, String message) async {
     Map data = {"reason": reason, "message": message};
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs = await SharedPreferences.getInstance();
     String? client_id = iAmA == "consultant"? Params.consultant_client_id: Params.patient_client_id;
     String? token = prefs.getString("token");
 
@@ -527,7 +530,7 @@ class Apis {
   //TODO: handle response body
   Future<bool?> viewAppointment(String reason, String message) async {
     Map data = {"reason": reason, "message": message};
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs = await SharedPreferences.getInstance();
     String? client_id = iAmA == "consultant"? Params.consultant_client_id: Params.patient_client_id;
     String? token = prefs.getString("token");
 
@@ -558,7 +561,7 @@ class Apis {
   //------Recommended Doctor----------------------------------------------------
   Future<Map?> recommendedDoctor(String bodyPart) async {
     Map data = {"q": bodyPart};
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs = await SharedPreferences.getInstance();
     String? client_id = prefs.getString("Client-ID");
     String? token = prefs.getString("token");
 
@@ -588,7 +591,7 @@ class Apis {
   //-----Get Doctor Details-----------------------------------------------------
   //TODO: handle response body
   Future<Map?> getDoctorDetails() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs = await SharedPreferences.getInstance();
     String? client_id = iAmA == "consultant"? Params.consultant_client_id: Params.patient_client_id;
     String? token = prefs.getString("token");
 
@@ -646,7 +649,7 @@ class Apis {
       "route": route,
       "additional_note": additional_note
     };
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs = await SharedPreferences.getInstance();
     String? client_id = iAmA == "consultant"? Params.consultant_client_id: Params.patient_client_id;
     String? token = prefs.getString("token");
 
@@ -693,7 +696,7 @@ class Apis {
 
   //#-------------getPrescription----------------------------------------------------------------------------
   Future<Map?> getPrescription() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs = await SharedPreferences.getInstance();
     String? client_id = iAmA == "consultant"? Params.consultant_client_id: Params.patient_client_id;
     String? token = prefs.getString("token");
 
@@ -744,7 +747,7 @@ class Apis {
 
   //=============================================WALLET DETAILS======================================================
   Future<Map?> walletDetails() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs = await SharedPreferences.getInstance();
     String? client_id = iAmA == "consultant"? Params.consultant_client_id: Params.patient_client_id;
     String? token = prefs.getString("token");
 
@@ -780,7 +783,7 @@ class Apis {
   //=========================================MAKE DEPOSIT===========================================================
   Future<Map?> makeDeposit(String type, String amount) async {
     Map data = {'type': type, 'amount': amount};
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs = await SharedPreferences.getInstance();
     String? client_id = iAmA == "consultant"? Params.consultant_client_id: Params.patient_client_id;
     String? token = prefs.getString("token");
 
@@ -824,7 +827,7 @@ class Apis {
   //=================================================MAKE WITHDRAWAL===================================================
   Future<Map?> makeWithdrawal(String amount, String withdrawalPin) async {
     Map data = {'amount': amount, 'withdrawal_pin': withdrawalPin};
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs = await SharedPreferences.getInstance();
     String? client_id = iAmA == "consultant"? Params.consultant_client_id: Params.patient_client_id;
     String? token = prefs.getString("token");
 
@@ -897,7 +900,7 @@ class Apis {
 
   //==============================================VIEW TRANSACTIONS==============================================
   Future<Map?> viewTransactions(String phone, String password) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs = await SharedPreferences.getInstance();
     String? client_id = iAmA == "consultant"? Params.consultant_client_id: Params.patient_client_id;
     String? token = prefs.getString("token");
 
