@@ -30,3 +30,6 @@
 
 ## 0.1.1
 * Animation library refactor for sharedPref
+
+## 0.1.2
+* Fixed a bug in login endpoint

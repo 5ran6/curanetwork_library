@@ -122,13 +122,23 @@ class Apis {
 
       prefs.setBool('loggedIn', true);
       prefs.setString('refresh_token', jsonData["refresh"]);
-      prefs.setString('token', jsonData["access_token"]);
+      prefs.setString('token', jsonData["access"]);
 
       return {
+        "status": "success",
         "refresh_token": jsonData["refresh"],
-        "token": jsonData["access_token"],
+        "token": jsonData["access"],
       };
-    } else {
+    }
+    else if (response.statusCode == 401){
+      jsonData = json.decode(response.body);
+      return {
+        "status": "failed",
+        "error": jsonData["detail"],
+      };
+    }
+
+    else {
       if (debug) print("Error Requesting API");
       return null;
     }
