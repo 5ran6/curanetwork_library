@@ -33,3 +33,8 @@
 
 ## 0.1.2
 * Fixed a bug in login endpoint
+
+## 0.1.3
+* Fixed a bug in sendOtp endpoint
+
+

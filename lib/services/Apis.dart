@@ -277,7 +277,12 @@ class Apis {
         "expires": tools.dateUtil(jsonData["expires"].toString()),
         "message": jsonData["message"]
       };
-    } else {
+    } else if (response.statusCode >= 400 && response.statusCode >= 499 ){
+      return {
+        "status": jsonData["status"],
+        "message": jsonData["message"]
+      };
+    }else {
       if (debug) print("Error Requesting API");
       return null;
     }
