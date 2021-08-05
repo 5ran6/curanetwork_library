@@ -37,4 +37,25 @@
 ## 0.1.3
 * Fixed a bug in sendOtp endpoint
 
+## 0.1.4
+* Fixed a bug in signUp endpoint
+
+## 0.1.5
+* Fixed another bug in signUp endpoint
+
+## 0.1.6
+* Fixed another bug in signUp endpoint
+
+## 0.1.7
+* Fixed null exception in signUp endpoint
+
+## 0.1.8
+* Fixed an exception in signUp endpoint
+
+## 0.2.0
+* Added a new DD/MM/YYYY format
+
+## 0.2.1
+* Added 36 states of Nigeria and bank list
+
 

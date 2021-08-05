@@ -1,5 +1,4 @@
 import 'package:curanetwork_library/imports/imports.dart';
-import 'package:curanetwork_library/utils/tools.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -39,13 +38,14 @@ class Apis {
     if (response.statusCode == 200 || response.statusCode == 201) {
       jsonData = json.decode(response.body);
 
-      prefs.setString('email', jsonData["email"]);
-      prefs.setString('mobile', jsonData["mobile"]);
-      prefs.setString('referralCode', jsonData["referralCode"]);
-      prefs.setString('username', jsonData["username"]);
-      prefs.setInt('id', jsonData["id"]);
+      prefs.setString('email', jsonData["email"].toString());
+      prefs.setString('mobile', jsonData["mobile"].toString());
+      prefs.setString('referralCode', jsonData["referralCode"].toString());
+      prefs.setString('username', jsonData["username"].toString());
+      prefs.setInt('id', jsonData["id"].toInt());
 
       return {
+        "status": "success",
         "email": jsonData["email"],
         "mobile": jsonData["mobile"],
         "referralCode": jsonData["referralCode"],
@@ -53,8 +53,11 @@ class Apis {
         "id": jsonData["id"]
       };
     } else if (response.statusCode == 400){
+      jsonData = json.decode(response.body);
+      var error = jsonData["password"]![0] == null ? "Unable to create account. Check if account already exists" : jsonData["password"]![0];
       return {
-        "error": jsonData["password"],
+        "status": "error",
+        "error": error,
       };
     }else {
       if (debug) print("Error Requesting API");
