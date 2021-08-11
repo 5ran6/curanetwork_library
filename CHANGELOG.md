@@ -58,4 +58,9 @@
 ## 0.2.1
 * Added 36 states of Nigeria and bank list
 
+## 0.2.4
+* Added upload image util using dio lib
+
+## 0.2.6
+* Corrected view wallet transactions
 

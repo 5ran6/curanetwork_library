@@ -1,6 +1,6 @@
 import 'package:curanetwork_library/imports/imports.dart';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:dio/dio.dart';
 
 class Apis {
   bool debug = true;
@@ -940,13 +940,11 @@ class Apis {
       jsonData = json.decode(response.body);
 
       return {
-        "id": jsonData["results"][0]["refresh"],
-        "created": tools.dateUtil(jsonData["results"][0]["created"]),
-        "modified": tools.dateUtil(jsonData["results"][0]["modified"]),
-        "currency": jsonData["results"][0]["currency"],
-        "amount": jsonData["results"][0]["amount"],
-        "status": jsonData["results"][0]["status"],
-        "user": jsonData["results"][0]["user"],
+
+        "count": jsonData["count"],
+        "next": jsonData["next"],
+        "previous": jsonData["previous"],
+        "results": jsonData["results"] //this is a list of map
       };
     } else {
       if (debug) print("Error Requesting API");
@@ -962,5 +960,62 @@ class Apis {
 //payWith Bank Transfer
   Future<Map?> payTransfer(String email, String password) async {
     return null;
+  }
+
+
+  //================================================UPLOAD ANY FILE================================================
+  Future<dynamic> uploadFile(filePath) async {
+    //user im use to upload image
+    prefs = await SharedPreferences.getInstance();
+//    String? token = prefs.getString("token");
+    String? token = "JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjI4MjgyMzIyLCJqdGkiOiIxNTk0OTE4NDc0ZDI0MzhjOWI5NDY2ZTQ2YTg5ZjVlMyIsInVzZXJfaWQiOjE2fQ.Qw7VuCkKuhyCoLoiHAWdzjgkZvSUvxEh26i61ihGdHM";
+
+
+    try {
+      FormData formData =
+      new FormData.fromMap({
+        "file":
+        await MultipartFile.fromFile(filePath, filename: "image")});
+      var jsonData;
+      Response response =
+      await Dio().post(
+          Params.base_url + "/base/upload",
+          data: formData,
+          options: Options(
+              headers: <String, String>{
+                'Authorization': 'Bearer $token',
+              }
+          )
+      );
+      if (debug) {
+        print('Status Code = ' +
+            response.statusCode.toString() +
+            ". Response: " +
+            response.data.toString());
+      }
+
+      /*If the response is 200 or 201 (success) then the response will be decoded */
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        jsonData = json.decode(response.data.toString());
+        return {
+          "status": "success",
+          "message": jsonData["message"],
+          "data": jsonData["data"]
+        };
+      } else if (response.statusCode == 422){
+        jsonData = json.decode(response.data.toString());
+         return {
+          "status": "error",
+          "error": jsonData["message"],
+        };
+      }else {
+        if (debug) print("Error Requesting API");
+        return null;
+      }
+    }on DioError catch (e) {
+      return e.response;
+    } catch(e){
+    }
+
   }
 }

@@ -60,7 +60,6 @@ class Tools {
   Map<String, String> banks = {
     "011": "First Bank of Nigeria",
     "057": "Zenith Bank",
-    "215": "Unity Bank",
     "058": "GTBank Plc",
     "032": "Union Bank",
     "232": "Sterling Bank",
@@ -70,6 +69,7 @@ class Tools {
     "084": "Enterprise Bank",
     "063": "Diamond Bank",
     "030": "Heritage",
+    "215": "Unity Bank",
     "402": "Jubilee Life Mortgage Bank",
     "082": "Keystone Bank",
     "221": "Stanbic IBTC Bank",
