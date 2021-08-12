@@ -7,18 +7,21 @@ class Apis {
   Tools tools = new Tools();
   late SharedPreferences prefs;
 
-  final String? iAmA; /// enum ["consultant" or "patient"]
+  final String? iAmA;
 
-  Apis (this.iAmA);
+  /// enum ["consultant" or "patient"]
+
+  Apis(this.iAmA);
 
   //#-----Accounts-------------------------------------------------------------------------------------------------
 
 //create user
   Future<Map?> signUp(String email, String mobile, String password) async {
     Map data = {'email': email, 'mobile': mobile, 'password': password};
-    prefs = await SharedPreferences.getInstance();
 
-    String? client_id = iAmA == "consultant"? Params.consultant_client_id: Params.patient_client_id;
+    String? client_id = iAmA == "consultant"
+        ? Params.consultant_client_id
+        : Params.patient_client_id;
 
     /*Calling the API url */
     var jsonData;
@@ -37,29 +40,32 @@ class Apis {
     /*If the response is 200 or 201 (success) then the response will be decoded */
     if (response.statusCode == 200 || response.statusCode == 201) {
       jsonData = json.decode(response.body);
+      await SharedPreferences.getInstance().then((value){
+        value.setString('email', jsonData["email"].toString());
+        value.setString('mobile', jsonData["mobile"].toString());
+        value.setString('referralCode', jsonData["referralCode"].toString());
+        value.setString('username', jsonData["username"].toString());
+        value.setInt('id', jsonData["id"].toInt());
+        return {
+          "status": "success",
+          "email": jsonData["email"],
+          "mobile": jsonData["mobile"],
+          "referralCode": jsonData["referralCode"],
+          "username": jsonData["username"],
+          "id": jsonData["id"]
+        };
+      });
 
-      prefs.setString('email', jsonData["email"].toString());
-      prefs.setString('mobile', jsonData["mobile"].toString());
-      prefs.setString('referralCode', jsonData["referralCode"].toString());
-      prefs.setString('username', jsonData["username"].toString());
-      prefs.setInt('id', jsonData["id"].toInt());
-
-      return {
-        "status": "success",
-        "email": jsonData["email"],
-        "mobile": jsonData["mobile"],
-        "referralCode": jsonData["referralCode"],
-        "username": jsonData["username"],
-        "id": jsonData["id"]
-      };
-    } else if (response.statusCode == 400){
+    } else if (response.statusCode == 400) {
       jsonData = json.decode(response.body);
-      var error = jsonData["password"]![0] == null ? "Unable to create account. Check if account already exists" : jsonData["password"]![0];
+      var error = jsonData["password"]![0] == null
+          ? "Unable to create account. Check if account already exists"
+          : jsonData["password"]![0];
       return {
         "status": "error",
         "error": error,
       };
-    }else {
+    } else {
       if (debug) print("Error Requesting API");
       return null;
     }
@@ -69,9 +75,10 @@ class Apis {
   Future<String?> activateAccount(
       String type, String email, String mobile, String code) async {
     Map data = {'type': type, 'email': email, 'mobile': mobile, 'code': code};
-    prefs = await SharedPreferences.getInstance();
 
-    String? client_id = iAmA == "consultant"? Params.consultant_client_id: Params.patient_client_id;
+    String? client_id = iAmA == "consultant"
+        ? Params.consultant_client_id
+        : Params.patient_client_id;
 
     /*Calling the API url */
     var jsonData;
@@ -102,8 +109,9 @@ class Apis {
   //login with email
   Future<Map?> loginEmail(String email, String password) async {
     Map data = {'username': email, 'password': password};
-    prefs = await SharedPreferences.getInstance();
-    String? client_id = iAmA == "consultant"? Params.consultant_client_id: Params.patient_client_id;
+    String? client_id = iAmA == "consultant"
+        ? Params.consultant_client_id
+        : Params.patient_client_id;
 
     /*Calling the API url */
     var jsonData;
@@ -123,25 +131,24 @@ class Apis {
     if (response.statusCode == 200 || response.statusCode == 201) {
       jsonData = json.decode(response.body);
 
-      prefs.setBool('loggedIn', true);
-      prefs.setString('refresh_token', jsonData["refresh"]);
-      prefs.setString('token', jsonData["access"]);
+      await SharedPreferences.getInstance().then((value) {
+        value.setBool('loggedIn', true);
+        value.setString('refresh_token', jsonData["refresh"]);
+        value.setString('token', jsonData["access"]);
+        return {
+          "status": "success",
+          "refresh_token": jsonData["refresh"],
+          "token": jsonData["access"],
+        };
+      });
 
-      return {
-        "status": "success",
-        "refresh_token": jsonData["refresh"],
-        "token": jsonData["access"],
-      };
-    }
-    else if (response.statusCode == 401){
+    } else if (response.statusCode == 401) {
       jsonData = json.decode(response.body);
       return {
         "status": "failed",
         "error": jsonData["detail"],
       };
-    }
-
-    else {
+    } else {
       if (debug) print("Error Requesting API");
       return null;
     }
@@ -150,8 +157,9 @@ class Apis {
   //login with phone
   Future<Map?> loginPhone(String phone, String password) async {
     Map data = {'username': phone, 'password': password};
-    prefs = await SharedPreferences.getInstance();
-    String? client_id = iAmA == "consultant"? Params.consultant_client_id: Params.patient_client_id;
+    String? client_id = iAmA == "consultant"
+        ? Params.consultant_client_id
+        : Params.patient_client_id;
 
     /*Calling the API url */
     var jsonData;
@@ -171,14 +179,16 @@ class Apis {
     if (response.statusCode == 200 || response.statusCode == 201) {
       jsonData = json.decode(response.body);
 
-      prefs.setBool('loggedIn', true);
-      prefs.setString('refresh_token', jsonData["refresh"]);
-      prefs.setString('token', jsonData["access_token"]);
+      await SharedPreferences.getInstance().then((value) {
+        value.setBool('loggedIn', true);
+        value.setString('refresh_token', jsonData["refresh"]);
+        value.setString('token', jsonData["access_token"]);
+        return {
+          "refresh_token": jsonData["refresh"],
+          "token": jsonData["access_token"],
+        };
+      });
 
-      return {
-        "refresh_token": jsonData["refresh"],
-        "token": jsonData["access_token"],
-      };
     } else {
       if (debug) print("Error Requesting API");
       return null;
@@ -186,11 +196,11 @@ class Apis {
   }
 
 //edit patients profile
-  Future<String?> editPatientProfile(Map details) async {
+  Future<String?> editPatientProfile(Map details, String token) async {
     /// values expected (as spelt) in details map are [ "firstName": "Immanuel", "middleName": "", "lastName": "Kolapo", "dateOfBirth": null, "sex": "Male", "address": "", "city": "", "state": "", "selfie": null, "identityType": "", "identityNumber": "", "identityVerified": false, "weight": null, "height": null, "genotype": "", "medicalDocuments": null, "emergencyContacts": null, ]
-    prefs = await SharedPreferences.getInstance();
-    String? client_id = iAmA == "consultant"? Params.consultant_client_id: Params.patient_client_id;
-    String? token = prefs.getString("token");
+     String? client_id = iAmA == "consultant"
+        ? Params.consultant_client_id
+        : Params.patient_client_id;
 
     Map data = details;
     /*Calling the API url */
@@ -218,11 +228,11 @@ class Apis {
   }
 
 //edit patients profile
-  Future<String?> editDoctorProfile(Map details) async {
+  Future<String?> editDoctorProfile(Map details, String token) async {
     /// values expected (as spelt) in details map are [ "firstName": "Immanuel", "middleName": "", "lastName": "Kolapo", "dateOfBirth": null, "sex": "Male", "address": "", "city": "", "state": "", "selfie": null, "identityType": "", "identityNumber": "", "identityVerified": false, "weight": null, "height": null, "genotype": "", "medicalDocuments": null, "emergencyContacts": null, ]
-    prefs = await SharedPreferences.getInstance();
-    String? client_id = iAmA == "consultant"? Params.consultant_client_id: Params.patient_client_id;
-    String? token = prefs.getString("token");
+    String? client_id = iAmA == "consultant"
+        ? Params.consultant_client_id
+        : Params.patient_client_id;
 
     Map data = details;
     /*Calling the API url */
@@ -252,8 +262,9 @@ class Apis {
   //send otp
   Future<Map?> sendOtp(String email, String phone) async {
     Map data = {'email': email, 'mobile': phone};
-    prefs = await SharedPreferences.getInstance();
-    String? client_id = iAmA == "consultant"? Params.consultant_client_id: Params.patient_client_id;
+    String? client_id = iAmA == "consultant"
+        ? Params.consultant_client_id
+        : Params.patient_client_id;
 
     /*Calling the API url */
     var jsonData;
@@ -272,7 +283,6 @@ class Apis {
     /*If the response is 200 or 201 (success) then the response will be decoded */
     if (response.statusCode == 200 || response.statusCode == 201) {
       jsonData = json.decode(response.body);
-
       return {
         "status": jsonData["status"],
         "reference": jsonData["reference"],
@@ -280,12 +290,10 @@ class Apis {
         "expires": tools.dateUtil(jsonData["expires"].toString()),
         "message": jsonData["message"]
       };
-    } else if (response.statusCode >= 400 && response.statusCode >= 499 ){
-      return {
-        "status": jsonData["status"],
-        "message": jsonData["message"]
-      };
-    }else {
+
+    } else if (response.statusCode >= 400 && response.statusCode >= 499) {
+      return {"status": jsonData["status"], "message": jsonData["message"]};
+    } else {
       if (debug) print("Error Requesting API");
       return null;
     }
@@ -301,8 +309,9 @@ class Apis {
       'reference': reference
     };
 
-    prefs = await SharedPreferences.getInstance();
-    String? client_id = iAmA == "consultant"? Params.consultant_client_id: Params.patient_client_id;
+    String? client_id = iAmA == "consultant"
+        ? Params.consultant_client_id
+        : Params.patient_client_id;
 
     /*Calling the API url */
     var jsonData;
@@ -332,8 +341,9 @@ class Apis {
   Future<Map?> identityVerification(String id_type, String bvn) async {
     /// [id_type] e.g bvn
     Map data = {'id_type': id_type, 'id_number': bvn};
-    prefs = await SharedPreferences.getInstance();
-    String? client_id = iAmA == "consultant"? Params.consultant_client_id: Params.patient_client_id;
+    String? client_id = iAmA == "consultant"
+        ? Params.consultant_client_id
+        : Params.patient_client_id;
 
     /*Calling the API url */
     var jsonData;
@@ -375,12 +385,12 @@ class Apis {
   }
 
   //get user account details
-  Future<Map?> getUserAccountDetails() async {
+  Future<Map?> getUserAccountDetails(String token) async {
     /// [id_type] e.g bvn
 
-    prefs = await SharedPreferences.getInstance();
-    String? client_id = iAmA == "consultant"? Params.consultant_client_id: Params.patient_client_id;
-    String? token = prefs.getString("token");
+    String? client_id = iAmA == "consultant"
+        ? Params.consultant_client_id
+        : Params.patient_client_id;
 
     /*Calling the API url */
     var jsonData;
@@ -422,22 +432,21 @@ class Apis {
 
 // logout
   Future<bool?> logout() async {
-    prefs = await SharedPreferences.getInstance();
     await prefs.clear().then((value) {
-      return value;
+      return true;
     });
   }
 
 //#-----Appointments-------------------------------------------------------------------------------------------------
   //-------Book An Appointment--------------------------------------------------
-  Future<Map?> bookAppointment(int doctor, String dateTime) async {
+  Future<Map?> bookAppointment(int doctor, String dateTime, String token) async {
     Map data = {'doctor': doctor, 'dateTime': dateTime};
 
     ///date format [dateTime] is 2021-04-22 06:00:00
 
-    prefs = await SharedPreferences.getInstance();
-    String? client_id = iAmA == "consultant"? Params.consultant_client_id: Params.patient_client_id;
-    String? token = prefs.getString("token");
+    String? client_id = iAmA == "consultant"
+        ? Params.consultant_client_id
+        : Params.patient_client_id;
 
     /*Calling the API url */
     var jsonData;
@@ -471,13 +480,14 @@ class Apis {
   }
 
   //-------Reschedule Appointment-----------------------------------------------
-  Future<String?> rescheduleAppointment(String dateTime) async {
+  Future<String?> rescheduleAppointment(String dateTime, String token) async {
     ///date format [dateTime] is 2021-04-22 06:00:00
 
     Map data = {"dateTime": dateTime};
     prefs = await SharedPreferences.getInstance();
-    String? client_id = iAmA == "consultant"? Params.consultant_client_id: Params.patient_client_id;
-    String? token = prefs.getString("token");
+    String? client_id = iAmA == "consultant"
+        ? Params.consultant_client_id
+        : Params.patient_client_id;
 
     /*Calling the API url */
     var jsonData;
@@ -497,9 +507,8 @@ class Apis {
     if (response.statusCode == 200 || response.statusCode == 201) {
       jsonData = json.decode(response.body);
       prefs.setString('dateTime', Tools().dateUtil(jsonData["dateTime"]));
-      String message = jsonData['message'];
 
-      return message;
+      return jsonData['message'];
     }
     // if dateTime in the past
     else if (response.statusCode == 400) {
@@ -513,11 +522,11 @@ class Apis {
 
   //-------Cancel Appointment---------------------------------------------------
   //TODO: handle response body
-  Future<bool?> cancelAppointment(String reason, String message) async {
+  Future<bool?> cancelAppointment(String reason, String message, String token) async {
     Map data = {"reason": reason, "message": message};
-    prefs = await SharedPreferences.getInstance();
-    String? client_id = iAmA == "consultant"? Params.consultant_client_id: Params.patient_client_id;
-    String? token = prefs.getString("token");
+     String? client_id = iAmA == "consultant"
+        ? Params.consultant_client_id
+        : Params.patient_client_id;
 
     /*Calling the API url */
     var jsonData;
@@ -536,7 +545,6 @@ class Apis {
     /*If the response is 200 or 201 (success) then the response will be decoded */
     if (response.statusCode == 200 || response.statusCode == 201) {
       jsonData = json.decode(response.body);
-
       return true;
     } else {
       if (debug) print("Error Requesting API");
@@ -546,11 +554,11 @@ class Apis {
 
   //------View Appointments-----------------------------------------------------
   //TODO: handle response body
-  Future<bool?> viewAppointment(String reason, String message) async {
+  Future<bool?> viewAppointment(String reason, String message, String token) async {
     Map data = {"reason": reason, "message": message};
-    prefs = await SharedPreferences.getInstance();
-    String? client_id = iAmA == "consultant"? Params.consultant_client_id: Params.patient_client_id;
-    String? token = prefs.getString("token");
+     String? client_id = iAmA == "consultant"
+        ? Params.consultant_client_id
+        : Params.patient_client_id;
 
     /*Calling the API url */
     var jsonData;
@@ -577,11 +585,9 @@ class Apis {
   }
 
   //------Recommended Doctor----------------------------------------------------
-  Future<Map?> recommendedDoctor(String bodyPart) async {
+  Future<Map?> recommendedDoctor(String bodyPart, String token) async {
     Map data = {"q": bodyPart};
-    prefs = await SharedPreferences.getInstance();
     String? client_id = prefs.getString("Client-ID");
-    String? token = prefs.getString("token");
 
     /*Calling the API url */
     var jsonData;
@@ -608,10 +614,10 @@ class Apis {
 
   //-----Get Doctor Details-----------------------------------------------------
   //TODO: handle response body
-  Future<Map?> getDoctorDetails() async {
-    prefs = await SharedPreferences.getInstance();
-    String? client_id = iAmA == "consultant"? Params.consultant_client_id: Params.patient_client_id;
-    String? token = prefs.getString("token");
+  Future<Map?> getDoctorDetails(String token) async {
+      String? client_id = iAmA == "consultant"
+        ? Params.consultant_client_id
+        : Params.patient_client_id;
 
     /*Calling the API url */
     var jsonData;
@@ -651,7 +657,7 @@ class Apis {
       String length,
       String frequency,
       String route,
-      String additional_note) async {
+      String additional_note, String token) async {
     ///date format [dateTime] is 2021-04-22 06:00:00
 
     Map data = {
@@ -667,9 +673,9 @@ class Apis {
       "route": route,
       "additional_note": additional_note
     };
-    prefs = await SharedPreferences.getInstance();
-    String? client_id = iAmA == "consultant"? Params.consultant_client_id: Params.patient_client_id;
-    String? token = prefs.getString("token");
+     String? client_id = iAmA == "consultant"
+        ? Params.consultant_client_id
+        : Params.patient_client_id;
 
     /*Calling the API url */
     var jsonData;
@@ -713,10 +719,10 @@ class Apis {
   }
 
   //#-------------getPrescription----------------------------------------------------------------------------
-  Future<Map?> getPrescription() async {
-    prefs = await SharedPreferences.getInstance();
-    String? client_id = iAmA == "consultant"? Params.consultant_client_id: Params.patient_client_id;
-    String? token = prefs.getString("token");
+  Future<Map?> getPrescription(String token) async {
+      String? client_id = iAmA == "consultant"
+        ? Params.consultant_client_id
+        : Params.patient_client_id;
 
     /*Calling the API url */
     var jsonData;
@@ -764,10 +770,10 @@ class Apis {
 //#-----Wallets-------------------------------------------------------------------------------------------------
 
   //=============================================WALLET DETAILS======================================================
-  Future<Map?> walletDetails() async {
-    prefs = await SharedPreferences.getInstance();
-    String? client_id = iAmA == "consultant"? Params.consultant_client_id: Params.patient_client_id;
-    String? token = prefs.getString("token");
+  Future<Map?> walletDetails(String token) async {
+     String? client_id = iAmA == "consultant"
+        ? Params.consultant_client_id
+        : Params.patient_client_id;
 
     /*Calling the API url */
     var jsonData;
@@ -799,11 +805,11 @@ class Apis {
   }
 
   //=========================================MAKE DEPOSIT===========================================================
-  Future<Map?> makeDeposit(String type, String amount) async {
+  Future<Map?> makeDeposit(String type, String amount, String token) async {
     Map data = {'type': type, 'amount': amount};
-    prefs = await SharedPreferences.getInstance();
-    String? client_id = iAmA == "consultant"? Params.consultant_client_id: Params.patient_client_id;
-    String? token = prefs.getString("token");
+     String? client_id = iAmA == "consultant"
+        ? Params.consultant_client_id
+        : Params.patient_client_id;
 
     /*Calling the API url */
     var jsonData;
@@ -843,11 +849,11 @@ class Apis {
   }
 
   //=================================================MAKE WITHDRAWAL===================================================
-  Future<Map?> makeWithdrawal(String amount, String withdrawalPin) async {
+  Future<Map?> makeWithdrawal(String amount, String withdrawalPin, String token) async {
     Map data = {'amount': amount, 'withdrawal_pin': withdrawalPin};
-    prefs = await SharedPreferences.getInstance();
-    String? client_id = iAmA == "consultant"? Params.consultant_client_id: Params.patient_client_id;
-    String? token = prefs.getString("token");
+    String? client_id = iAmA == "consultant"
+        ? Params.consultant_client_id
+        : Params.patient_client_id;
 
     /*Calling the API url */
     var jsonData;
@@ -868,14 +874,11 @@ class Apis {
     }
     //response::Unprocessable entity
     if (response.statusCode == 422) {
-      prefs.setString('status', jsonData["status"]);
-      prefs.setString('message', jsonData["message"]);
 
       return {"status": jsonData["status"], "message": jsonData["message"]};
     }
     //response::Forbidden
     else if (response.statusCode == 403) {
-      prefs.setString('detail', jsonData["detail"]);
 
       return {"detail": jsonData["detail"]};
     }
@@ -917,10 +920,10 @@ class Apis {
   }
 
   //==============================================VIEW TRANSACTIONS==============================================
-  Future<Map?> viewTransactions(String phone, String password) async {
-    prefs = await SharedPreferences.getInstance();
-    String? client_id = iAmA == "consultant"? Params.consultant_client_id: Params.patient_client_id;
-    String? token = prefs.getString("token");
+  Future<Map?> viewTransactions(String phone, String password, String token) async {
+     String? client_id = iAmA == "consultant"
+        ? Params.consultant_client_id
+        : Params.patient_client_id;
 
     /*Calling the API url */
     var jsonData;
@@ -940,7 +943,6 @@ class Apis {
       jsonData = json.decode(response.body);
 
       return {
-
         "count": jsonData["count"],
         "next": jsonData["next"],
         "previous": jsonData["previous"],
@@ -962,31 +964,23 @@ class Apis {
     return null;
   }
 
-
   //================================================UPLOAD ANY FILE================================================
-  Future<dynamic> uploadFile(filePath) async {
+  Future<dynamic> uploadFile(filePath, String token) async {
     //user im use to upload image
     prefs = await SharedPreferences.getInstance();
 //    String? token = prefs.getString("token");
-    String? token = "JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjI4MjgyMzIyLCJqdGkiOiIxNTk0OTE4NDc0ZDI0MzhjOWI5NDY2ZTQ2YTg5ZjVlMyIsInVzZXJfaWQiOjE2fQ.Qw7VuCkKuhyCoLoiHAWdzjgkZvSUvxEh26i61ihGdHM";
-
+    token =
+        "JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjI4MjgyMzIyLCJqdGkiOiIxNTk0OTE4NDc0ZDI0MzhjOWI5NDY2ZTQ2YTg5ZjVlMyIsInVzZXJfaWQiOjE2fQ.Qw7VuCkKuhyCoLoiHAWdzjgkZvSUvxEh26i61ihGdHM";
 
     try {
-      FormData formData =
-      new FormData.fromMap({
-        "file":
-        await MultipartFile.fromFile(filePath, filename: "image")});
+      FormData formData = new FormData.fromMap(
+          {"file": await MultipartFile.fromFile(filePath, filename: "image")});
       var jsonData;
-      Response response =
-      await Dio().post(
-          Params.base_url + "/base/upload",
+      Response response = await Dio().post(Params.base_url + "/base/upload",
           data: formData,
-          options: Options(
-              headers: <String, String>{
-                'Authorization': 'Bearer $token',
-              }
-          )
-      );
+          options: Options(headers: <String, String>{
+            'Authorization': 'Bearer $token',
+          }));
       if (debug) {
         print('Status Code = ' +
             response.statusCode.toString() +
@@ -1002,20 +996,18 @@ class Apis {
           "message": jsonData["message"],
           "data": jsonData["data"]
         };
-      } else if (response.statusCode == 422){
+      } else if (response.statusCode == 422) {
         jsonData = json.decode(response.data.toString());
-         return {
+        return {
           "status": "error",
           "error": jsonData["message"],
         };
-      }else {
+      } else {
         if (debug) print("Error Requesting API");
         return null;
       }
-    }on DioError catch (e) {
+    } on DioError catch (e) {
       return e.response;
-    } catch(e){
-    }
-
+    } catch (e) {}
   }
 }

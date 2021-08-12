@@ -64,3 +64,6 @@
 ## 0.2.6
 * Corrected view wallet transactions
 
+## 0.2.7
+* Refactored API.dart such that token comes from the users app
+

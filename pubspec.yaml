@@ -1,6 +1,6 @@
 name: curanetwork_library
 description: A library for the frontend and backend of the curanetwork mobile apps.
-version: 0.2.6
+version: 0.2.7
 homepage: https://github.com/5ran6/curanetwork_library
 
 environment:
