@@ -67,3 +67,9 @@
 ## 0.2.7
 * Refactored API.dart such that token comes from the users app
 
+
+## 0.2.8
+* Refactored API.dart such that token is gotten first before apis are called
+
+## 0.2.9
+* fixed login api
